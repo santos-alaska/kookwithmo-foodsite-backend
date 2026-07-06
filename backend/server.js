@@ -49,7 +49,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const __dirname = path.resolve();
 
 
 app.use(express.json({ limit: "10mb" }));
@@ -63,12 +62,12 @@ app.use("/api/payments", paymentsRoutes)
 app.use("/api/analytics", analyticsRoutes)
 app.use("/api/users", userRoutes); // this is new
 
-app.use(express.static(path.join(__dirname, "client/dist")));
+// app.use(express.static(path.join(__dirname, "client/dist")));
 
-// app.get("*", (req, res) => {
-app.get(/(.*)/, (req, res) => {
-  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
-});
+// // app.get("*", (req, res) => {
+// app.get(/(.*)/, (req, res) => {
+//   res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+// });
 
 
 app.listen(PORT, () => {
