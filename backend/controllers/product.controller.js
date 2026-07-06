@@ -160,6 +160,16 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
+export const getMenuProducts = async (req, res) => {
+    try {
+        const products = await Product.find({}, "name price category").lean();
+        res.json({ products });
+    } catch (error) {
+        console.log("Error in getMenuProducts controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
 export const getFeaturedProducts = async (req, res) => {
     try {
         let featuredProducts = await redis.get("featured_products");
@@ -301,3 +311,31 @@ async function updateFeaturedProductsCache() {
         console.log("error in update cache function");
     }
 }
+
+export const updateProductPrice = async (req, res) => {
+    try {
+        const { price } = req.body;
+
+        if (price === undefined || isNaN(price) || Number(price) < 0) {
+            return res.status(400).json({ message: "A valid price is required" });
+        }
+
+        const product = await Product.findByIdAndUpdate(
+            req.params.id,
+            { price: Number(price) },
+            { new: true }
+        );
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // Invalidate featured products cache so price shows updated on frontend
+        await updateFeaturedProductsCache();
+
+        res.json({ message: "Price updated successfully", product });
+    } catch (error) {
+        console.log("Error in updateProductPrice controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
