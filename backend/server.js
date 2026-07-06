@@ -34,6 +34,7 @@
 import path from "path";
 
 import express from "express";
+import cors from "cors";
 import authRoutes from "./routes/auth.route.js";
 import productRoutes from "./routes/product.route.js";
 import cartRoutes from "./routes/cart.route.js";
@@ -50,6 +51,21 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+
+const allowedOrigins = [
+  (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, ""),
+  "http://localhost:5173",
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser())
