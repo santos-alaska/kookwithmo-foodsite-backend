@@ -65,13 +65,14 @@ app.use("/api/users", userRoutes); // this is new
 
 app.use(express.static(path.join(__dirname, "client/dist")));
 
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client/dist", "index.html"));
-  });
-  
+// app.get("*", (req, res) => {
+app.get(/(.*)/, (req, res) => {
+  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+});
+
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    connectDB();
+  console.log(`Server running on port ${PORT}`);
+  connectDB();
 });
 
