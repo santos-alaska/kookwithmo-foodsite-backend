@@ -13,18 +13,35 @@ const storeRefreshToken = async (userId, refreshToken) => {
     await redis.set(`refresh_token:${userId}`, refreshToken, "EX", 7 * 24 * 60 * 60);
 }
 
+// const setCookies = (res, accessToken, refreshToken) => {
+//     const isProduction = process.env.NODE_ENV === "production";
+//     res.cookie("accessToken", accessToken, {
+//         httpOnly: true,
+//         secure: isProduction,
+//         sameSite: isProduction ? "none" : "strict",
+//         maxAge: 15 * 60 * 1000
+//     })
+//     res.cookie("refreshToken", refreshToken, {
+//         httpOnly: true,
+//         secure: isProduction,
+//         sameSite: isProduction ? "none" : "strict",
+//         maxAge: 7 * 24 * 60 * 60 * 1000
+//     })
+// }
 const setCookies = (res, accessToken, refreshToken) => {
     const isProduction = process.env.NODE_ENV === "production";
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "strict",
+        domain: isProduction ? ".kookwithmo.com" : undefined,
         maxAge: 15 * 60 * 1000
     })
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "strict",
+        domain: isProduction ? ".kookwithmo.com" : undefined,
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
 }
@@ -152,4 +169,4 @@ export const getProfile = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
+
